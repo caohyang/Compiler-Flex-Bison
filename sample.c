@@ -2,6 +2,11 @@
 
 int main()
 {
-    printf("Hello, world!\n");
-    return 0;
+	int a = 4;
+   printf("Hello, world!\n");
+	if (a)
+		a = a + 4;
+   else
+      a = a * 4;
+	return 0;
 }
