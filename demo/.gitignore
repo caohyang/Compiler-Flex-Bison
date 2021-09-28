@@ -1,0 +1,6 @@
+.gitignore
+build
+cmake-build-debug
+.idea
+.vscode
+.cache
