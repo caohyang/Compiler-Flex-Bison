@@ -17,7 +17,6 @@
 ```
 sysyfParser/
 ├── CMakeLists.txt                  # 项目构建描述文档
-├── SysYF-- 语言定义.docx
 ├── SysYF-- 语言定义.pdf
 ├── README.md
 ├── doc
