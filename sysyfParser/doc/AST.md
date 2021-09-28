@@ -60,7 +60,7 @@ AST中使用的指针类型。实际上是`std::shared_ptr`
 该节点代表的语法结构在源文件的位置信息，实际上是`yy::location`。由bison/flex自动生成。
 
 ## Type
-包含SysY语言支持的数据类型：`Type::INT`、`Type::VOID`以及`Type::FLOAT`
+包含SysYF--语言支持的数据类型：`Type::INT`、`Type::VOID`以及`Type::FLOAT`
 
 ## Binop
 
@@ -188,7 +188,7 @@ int c[2][2] = {{1,2},{3,4}};//isExp=false
 
 [Type](#type) `VarDef::btype` 
 
-变量类型(在sysYF中只能是int或float)
+变量类型(在sysYF--中只能是int或float)
 
 `std::string VarDef::name`
 
