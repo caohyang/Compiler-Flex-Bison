@@ -188,7 +188,7 @@ int c[2][2] = {{1,2},{3,4}};//isExp=false
 
 [Type](#type) `VarDef::btype` 
 
-变量类型(在sysYF--中只能是int或float)
+变量类型(在SysYF--中只能是int或float)
 
 `std::string VarDef::name`
 
