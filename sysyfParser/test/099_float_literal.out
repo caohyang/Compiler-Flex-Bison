@@ -1,0 +1,12 @@
+float array[4] = {15.75, 15.75, (-0.0025), 0.0035};
+float sum(float a)
+{
+    float c = (-1.4);
+    float d = ((a+c)-(-array[0]));
+    return d;
+}
+int main()
+{
+    sum(15.775);
+    return 0;
+}
