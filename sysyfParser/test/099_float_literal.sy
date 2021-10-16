@@ -1,0 +1,11 @@
+//test float
+float array[4] = {1.575e1,1575E-2,-2.5e-3,35E-4};
+float sum(float a){
+    float c = -1.4;
+    float d = a + c - - array[0];
+    return d;
+}
+int main(){
+    sum(15.775);
+    return 0;
+}
