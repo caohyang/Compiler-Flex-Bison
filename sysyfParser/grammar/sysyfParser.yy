@@ -64,7 +64,7 @@ class sysyfDriver;
 %type <SyntaxTree::InitVal*>InitVal ConstInitVal
 %type <SyntaxTree::Expr*>Exp ConstExp AddExp EqExp PrimaryExp MulExp RelExp Cond UnaryExp
 %type <SyntaxTree::UnaryOp>UnaryOp
-%type <SyntaxTree::PtrList<SyntaxTree::Expr>>ConstExpList ExpList 
+%type <SyntaxTree::PtrList<SyntaxTree::Expr>>ConstExpList ExpList FuncRParams
 %type <SyntaxTree::FuncDef*>FuncDef
 %type <SyntaxTree::BlockStmt*>Block
 %type <SyntaxTree::FuncParam*>FuncFParam
@@ -474,12 +474,30 @@ UnaryExp: PrimaryExp{
 		$$ = temp;
 		$$->loc = @$;
 	}
+  | IDENTIFIER LPARENTHESE FuncRParams RPARENTHESE{
+		auto temp = new SyntaxTree::FuncCallStmt();
+		temp->name = $1;
+    for (auto &node: $3)
+		  temp->params.push_back(SyntaxTree::Ptr<SyntaxTree::Expr>(node));
+		$$ = temp;
+		$$->loc = @$;
+	}
 	| UnaryOp UnaryExp{
 		auto temp = new SyntaxTree::UnaryExpr();
 		temp->op = SyntaxTree::UnaryOp($1);
 		temp->rhs = SyntaxTree::Ptr<SyntaxTree::Expr>($2);
 		$$ = temp;
 		$$->loc = @$;
+  }
+	;
+
+FuncRParams:FuncRParams COMMA Exp{
+		$1.push_back(SyntaxTree::Ptr<SyntaxTree::Expr>($3));
+		$$=$1;
+	}
+	| Exp{
+		$$=SyntaxTree::PtrList<SyntaxTree::Expr>();
+   		$$.push_back(SyntaxTree::Ptr<SyntaxTree::Expr>($1));
   }
 	;
 
