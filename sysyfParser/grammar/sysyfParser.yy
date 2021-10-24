@@ -311,15 +311,15 @@ FuncFParams:FuncFParam{
   }
 	;
 
-FuncFParam:BType IDENTIFIER{
+FuncFParam: %empty{
+    $$ = new SyntaxTree::FuncParam();
+    $$->loc = @$;
+  }
+  | BType IDENTIFIER{
 		$$ = new SyntaxTree::FuncParam();
 		$$->name = $2;
 		$$->param_type=$1;
 		$$->loc = @$;
-  }
-  | %empty{
-    $$ = new SyntaxTree::FuncParam();
-    $$->loc = @$;
   }
 	;
 
