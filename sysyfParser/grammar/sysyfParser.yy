@@ -307,7 +307,7 @@ FuncDef:BType IDENTIFIER LPARENTHESE FuncFParams RPARENTHESE Block{
 
 FuncFParams:FuncFParam{
 		$$ = new SyntaxTree::FuncFParamList();
-    if (len($1->name)>0)
+    if ($1->name.length()>0)
 		  $$->params.push_back(SyntaxTree::Ptr<SyntaxTree::FuncParam>($1));
 		$$->loc = @$;
   }
