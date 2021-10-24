@@ -467,18 +467,11 @@ Number:INTCONST{
 UnaryExp: PrimaryExp{
 		$$ = $1;
   	}
-	| IDENTIFIER LPARENTHESE RPARENTHESE{
-		auto temp = new SyntaxTree::LVal();
-		temp->name = $1;
-		temp->loc = @$;
-		$$ = temp;
-		$$->loc = @$;
-	}
-  | IDENTIFIER LPARENTHESE FuncRParams RPARENTHESE{
+  	| IDENTIFIER LPARENTHESE FuncRParams RPARENTHESE{
 		auto temp = new SyntaxTree::FuncCallStmt();
 		temp->name = $1;
-    for (auto &node: $3)
-		  temp->params.push_back(SyntaxTree::Ptr<SyntaxTree::Expr>(node));
+		for (auto &node: $3)
+			temp->params.push_back(SyntaxTree::Ptr<SyntaxTree::Expr>(node));
 		$$ = temp;
 		$$->loc = @$;
 	}
@@ -495,9 +488,9 @@ FuncRParams:FuncRParams COMMA Exp{
 		$1.push_back(SyntaxTree::Ptr<SyntaxTree::Expr>($3));
 		$$=$1;
 	}
-	| Exp{
+	| %empty{
 		$$=SyntaxTree::PtrList<SyntaxTree::Expr>();
-   		$$.push_back(SyntaxTree::Ptr<SyntaxTree::Expr>($1));
+   		
   }
 	;
 
