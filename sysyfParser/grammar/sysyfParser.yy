@@ -298,7 +298,7 @@ FuncDef:BType IDENTIFIER LPARENTHESE FuncFParams RPARENTHESE Block{
 		$$ = new SyntaxTree::FuncDef();
 		$$->ret_type = $1;
 		$$->name = $2;   
-    if ($4.size > 0)
+    if ($4->params.size > 0)
 		  $$->param_list = SyntaxTree::Ptr<SyntaxTree::FuncFParamList>($4);
 		$$->body = SyntaxTree::Ptr<SyntaxTree::BlockStmt>($6);
 		$$->loc = @$;
@@ -307,7 +307,7 @@ FuncDef:BType IDENTIFIER LPARENTHESE FuncFParams RPARENTHESE Block{
 
 FuncFParams:FuncFParam{
 		$$ = new SyntaxTree::FuncFParamList();
-    if ($1.size >0)
+    if ($1->name != '')
 		  $$->params.push_back(SyntaxTree::Ptr<SyntaxTree::FuncParam>($1));
 		$$->loc = @$;
   }
@@ -316,6 +316,11 @@ FuncFParams:FuncFParam{
 FuncFParam: %empty{
     $$ = new SyntaxTree::FuncParam();
     $$->loc = @$;
+  }
+  | BType IDENTIFIER{
+    $$ = new SyntaxTree::FuncParam();
+    $$->param_type = $1;
+    $$->name = $2;
   }
   ;
 
