@@ -11,7 +11,7 @@
 # include "sysyfParser.h"
 %}
 
-%{
+%{ 
 #if defined __clang__
 # define CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
 #endif
@@ -83,28 +83,145 @@
 
 /* Regex abbreviations: */
 /********add regular expression for MultilineComment, HexConst, FloatConst, SingleLineComment********/
-MultilineComment	      //add your regular expression here and remove this comment
+MultiLineComment	    \/\*(\s|.)*?\*\/
+SingleLineComment	    \/\/[^\n]*
 Identifier              [_a-zA-Z][a-zA-Z0-9_]*
 OctConst                ("0"[0-7]*)
 DecConst                ([1-9][0-9]*)
-HexConst                //add your regular expression here and remove this comment
-FloatConst              //add your regular expression here and remove this comment
+HexConst                ("0x"|"0X")[0-9A-Fa-f]+
+FloatConst              [1-9][0-9]*.[0-9]+(("E"|"e")("+"|"-")?[0-9]+)?
 Blank                   [ \t\r]
 NewLine                 [\n]
-SingleLineComment	      //add your regular expression here and remove this comment
 
 %%
-/* keyword */
-/********add keyword definition and action here********/
 
-/* token and action */
-/********add other token definition and action here********/
+int         {return yy::sysyfParser::make_INT(loc);} 
+return      {return yy::sysyfParser::make_RETURN(loc);}
+float       {return yy::sysyfParser::make_FLOAT(loc);}
+void        {return yy::sysyfParser::make_VOID(loc);}
+const       {return yy::sysyfParser::make_CONST(loc);}
+if          {return yy::sysyfParser::make_IF(loc);}
+else        {return yy::sysyfParser::make_ELSE(loc);}
+while       {return yy::sysyfParser::make_WHILE(loc);}
+break       {return yy::sysyfParser::make_BREAK(loc);}
+continue    {return yy::sysyfParser::make_CONTINUE(loc);}
 
-<<EOF>>                     {return yy::sysyfParser::make_END(loc);}
-.                           {std::cout << "Error in scanner!" << '\n'; exit(1);}
+(<=)        {return yy::sysyfParser::make_LTE(loc);}
+(>=)        {return yy::sysyfParser::make_GTE(loc);}
+(==)        {return yy::sysyfParser::make_EQ(loc);} 
+(!=)        {return yy::sysyfParser::make_NEQ(loc);}
+[<]         {return yy::sysyfParser::make_LT(loc);}
+[>]         {return yy::sysyfParser::make_GT(loc);}
+
+[+]         {return yy::sysyfParser::make_PLUS(loc);}
+[-]         {return yy::sysyfParser::make_MINUS(loc);}
+[*]         {return yy::sysyfParser::make_MULTIPLY(loc);}
+[/]         {return yy::sysyfParser::make_DIVIDE(loc);}
+[%]         {return yy::sysyfParser::make_MODULO(loc);}
+[=]         {return yy::sysyfParser::make_ASSIGN(loc);}
+[;]         {return yy::sysyfParser::make_SEMICOLON(loc);}
+[,]         {return yy::sysyfParser::make_COMMA(loc);}
+[(]         {return yy::sysyfParser::make_LPARENTHESE(loc);}
+[)]         {return yy::sysyfParser::make_RPARENTHESE(loc);}
+[[]         {return yy::sysyfParser::make_LBRACKET(loc);}
+[]]         {return yy::sysyfParser::make_RBRACKET(loc);}
+[{]         {return yy::sysyfParser::make_LBRACE(loc);}
+[}]         {return yy::sysyfParser::make_RBRACE(loc);}
+
+{MultiLineComment}      {loc.step();}
+{SingleLineComment}     {loc.step();}
+{Blank}+                {loc.step();}
+{NewLine}+              {loc.lines(yyleng); loc.step();}
+{DecConst}              {
+                            std::string dec = yytext;
+                            unsigned sum = 0;
+                            int len = dec.size();
+                            for(int i = 0;i < len;i++){
+                                auto a = dec[i];
+                                sum = sum * 10 + a - 48;
+                            }
+                            return yy::sysyfParser::make_INTCONST(int(sum),loc);
+                        }
+{OctConst}              {
+                            std::string oct = yytext;
+                            unsigned sum = 0;
+                            int len = oct.size();
+                            for(int i = 1;i < len;i++){
+                                auto a = oct[i];
+                                sum  = sum * 8 + a - 48;
+                            }
+                            return yy::sysyfParser::make_INTCONST(int(sum),loc);
+                        }
+{HexConst}              {
+                            std::string hex = yytext;
+                            unsigned sum = 0;
+                            int len = hex.size();
+                            for(int i = 2;i < len;i++){
+                                auto a = hex[i];
+                                if (a >= 48 && a <= 57)
+                                    sum  = sum * 16 + a - 48;
+                                else if (a >= 65 && a <= 90)
+                                    sum = sum * 16 + a - 55;
+                                else
+                                    sum  = sum * 16 + a - 87;
+                            }
+                            return yy::sysyfParser::make_INTCONST(int(sum),loc);
+                        }
+{FloatConst}             {
+                            std::string fl = yytext;
+                            float sum = 0;
+                            int i, pow, len = fl.size();
+                            for(i = 0;i < len && fl[i] != '.';i++){
+                                auto a = fl[i];
+                                sum  = sum * 10 + a - 48;
+                            }
+                            if (i < len){
+                                float sum1 = 0;
+                                float p = 1;
+                                i++;
+                                for(;i < len && fl[i] != 'E' && fl[i] != 'e';i++){
+                                    p = p * 1.0 / 10;
+                                    auto a = fl[i];
+                                    sum1  = sum1 + (a - 48) * p;
+                                }
+                                sum = sum + sum1;
+                                if (i < len){
+                                    pow = 0;
+                                    i++;
+                                    if (fl[i] == '-'){
+                                        i++;
+                                        for(;i < len;i++){
+                                            auto a = fl[i];
+                                            pow  = pow * 10 + a - 48;
+                                        }
+                                        pow *= -1;           
+                                    }
+                                    else{
+                                        for(;i < len;i++){
+                                            auto a = fl[i];
+                                            pow  = pow * 10 + a - 48;
+                                        }                        
+                                    }
+                                    if (pow < 0){
+                                        for (i = pow;i < 0; i++)
+                                            sum /= 10;
+                                    }
+                                    else{
+                                        for (i = 0;i < pow; i++)
+                                            sum *= 10;
+                                    }
+                                }
+                            }
+                            return yy::sysyfParser::make_FLOATCONST(sum,loc);
+                        }
+{Identifier}            {return yy::sysyfParser::make_IDENTIFIER(yytext, loc);}
+<<EOF>>                 {return yy::sysyfParser::make_END(loc);}
+.                       {std::cout << "Error in scanner!" << '\n'; exit(1);}
+
 %%
 
 int yyFlexLexer::yylex() {
     std::cerr << "'int yyFlexLexer::yylex()' should never be called." << std::endl;
     exit(1);
 }
+
