@@ -294,19 +294,12 @@ ExpList:ExpList COMMA Exp{
   }
 	;
 
-FuncDef:BType IDENTIFIER LPARENTHESE FuncFParams RPARENTHESE Block{
+FuncDef:BType IDENTIFIER LPARENTHESE FuncFParam RPARENTHESE Block{
 		$$ = new SyntaxTree::FuncDef();
 		$$->ret_type = $1;
 		$$->name = $2;   
 		$$->param_list = SyntaxTree::Ptr<SyntaxTree::FuncFParamList>($4);
 		$$->body = SyntaxTree::Ptr<SyntaxTree::BlockStmt>($6);
-		$$->loc = @$;
-  }
-	;
-
-FuncFParams:FuncFParam{
-		$$ = new SyntaxTree::FuncFParamList();
-		$$->params.push_back(SyntaxTree::Ptr<SyntaxTree::FuncParam>($1));
 		$$->loc = @$;
   }
 	;
