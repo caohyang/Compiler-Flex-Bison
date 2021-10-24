@@ -294,7 +294,7 @@ ExpList:ExpList COMMA Exp{
   }
 	;
 
-FuncDef:BType IDENTIFIER LPARENTHESE FuncFParam RPARENTHESE Block{
+FuncDef:BType IDENTIFIER LPARENTHESE FuncFParams RPARENTHESE Block{
 		$$ = new SyntaxTree::FuncDef();
 		$$->ret_type = $1;
 		$$->name = $2;   
@@ -304,11 +304,20 @@ FuncDef:BType IDENTIFIER LPARENTHESE FuncFParam RPARENTHESE Block{
   }
 	;
 
+FuncFParams:FuncFParam{
+		$$ = new SyntaxTree::FuncFParamList();
+		$$->params.push_back(SyntaxTree::Ptr<SyntaxTree::FuncParam>($1));
+		$$->loc = @$;
+  }
+	;
+
 FuncFParam: %empty{
     $$ = new SyntaxTree::FuncParam();
     $$->loc = @$;
   }
-  | BType IDENTIFIER{
+  ;
+
+FuncFParam:BType IDENTIFIER{
 		$$ = new SyntaxTree::FuncParam();
 		$$->name = $2;
 		$$->param_type=$1;
