@@ -317,14 +317,6 @@ FuncFParam: %empty{
   }
   ;
 
-FuncFParam:BType IDENTIFIER{
-		$$ = new SyntaxTree::FuncParam();
-		$$->name = $2;
-		$$->param_type=$1;
-		$$->loc = @$;
-  }
-	;
-
 Block:LBRACE BlockItemList RBRACE{
 		$$ = new SyntaxTree::BlockStmt();
 		$$->body = $2;
