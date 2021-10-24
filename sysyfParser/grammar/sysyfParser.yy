@@ -298,8 +298,7 @@ FuncDef:BType IDENTIFIER LPARENTHESE FuncFParams RPARENTHESE Block{
 		$$ = new SyntaxTree::FuncDef();
 		$$->ret_type = $1;
 		$$->name = $2;   
-    if ($4->params.size() > 0)
-		  $$->param_list = SyntaxTree::Ptr<SyntaxTree::FuncFParamList>($4);
+    $$->param_list = SyntaxTree::Ptr<SyntaxTree::FuncFParamList>($4);
 		$$->body = SyntaxTree::Ptr<SyntaxTree::BlockStmt>($6);
 		$$->loc = @$;
   }
